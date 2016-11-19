@@ -1,0 +1,90 @@
+Program trace for sample values. We use the following notation:
+
+A) > ls
+A) a.txt b.txt
+
+It refers to a command and output in shell A. Likewise for B, C, etc.
+
+
+Simple Use
+==========
+
+A) > ./printer renew
+A) Memory not initialized
+A) Enter number of slots: 10
+A) 10
+A) Waiting for jobs.
+
+B) > ./client
+B) Please type a message to print.
+B) hello world
+B) The message was: hello world
+B) Job added to queue.
+
+A) Printing: hello world
+A) Done!
+
+
+Buffer Overflow Protection
+==========================
+
+A) > ./printer renew
+A) Memory not initialized
+A) Enter number of slots: 3
+A) 3
+A) Waiting for jobs.
+
+B) > bash many_clients.bash
+B) Please type a message to print.
+B) The message was: buffer_queue.c
+B) Job added to queue.
+B) Please type a message to print.
+B) The message was: buffer_queue.h
+B) Job added to queue.
+
+...
+
+
+A) Printing: buffer_queue.c
+A) Done!
+A) Printing: buffer_queue.h
+A) Done!
+
+...
+
+<B will exit once all messages have been sent to the printer>
+<A will exit once all messages have been printed>
+
+
+Multiple Printer Servers
+========================
+
+A) > ./printer renew
+A) Memory not initialized
+A) Enter number of slots: 3
+A) 3
+A) Waiting for jobs.
+
+B) > ./printer renew
+B) Memory already initialized: connected to bounded buffer of size 3
+B) To reconfigure the shared memory, run './printer renew'.
+B) Waiting for jobs.
+
+C) > bash many_clients.bash
+C) Please type a message to print.
+C) The message was: buffer_queue.c
+C) Job added to queue.
+C) Please type a message to print.
+C) The message was: buffer_queue.h
+C) Job added to queue.
+
+...
+
+A) Printing: buffer_queue.c
+A) Done!
+
+B) Printing: buffer_queue.h
+B) Done!
+
+<A and B will alternate jobs until the queue is empty>
+
